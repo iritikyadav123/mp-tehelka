@@ -2,11 +2,11 @@
 import { cn } from "@/lib/utils";
 
 interface SelectionProps {
-    className: string;
+    className?: string;
     label: string;
-    select: string;
+    select?: string;
     options: string[];
-    value: string; 
+    value: any; 
     onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void; 
 }
 

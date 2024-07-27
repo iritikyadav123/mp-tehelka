@@ -1,7 +1,8 @@
 
 "use client"
-import ArticleInputNews from "@/components/articleInputNews";
-import BreakingInputNews from "@/components/breakingInputNews";
+ 
+import ArticleInputNews from "@/components/ArticleInputNews";
+import BreakingInputNews from "@/components/BreakingInputNews";
 import NewstestPage from "@/components/NewtestPage";
 import StoryInputNews from "@/components/StoryInputNews";
 import Logo from "@/components/ui/Logo"

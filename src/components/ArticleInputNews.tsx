@@ -1,10 +1,11 @@
-import InputCard from "./ui/InputCard";
+import { NewsInputCard } from "./ui/NewsInputCard";
+
 
 
 export default function ArticleInputNews () {
     return (
        
-             <InputCard conType="article" />
+             <NewsInputCard conType={"article"}/>
         
     )
 }

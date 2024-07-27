@@ -1,12 +1,11 @@
-
-import InputCard from "./ui/InputCard";
+import { NewsInputCard } from "./ui/NewsInputCard";
 
 
 export default function BreakingInputNews () {
     return (
+     <NewsInputCard conType={"breaking"}/>
        
-             <InputCard conType="breaking" />
-        
+             
     )
 }
 
