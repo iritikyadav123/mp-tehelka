@@ -6,9 +6,10 @@ import { SingleImageDropzone } from "../Single-image-dropzon";
 interface ImageInputProps {
     value?: File | null;
     onChange: (file: File | null) => void;
+    process: number
 }
 
-export default function ImageInput({ value, onChange }: ImageInputProps) {
+export default function ImageInput({ value, onChange , process }: ImageInputProps) {
     return (
         <div>
             <SingleImageDropzone
@@ -23,10 +24,10 @@ export default function ImageInput({ value, onChange }: ImageInputProps) {
                 //@ts-ignore
                 onChange={(file) => onChange(file)}
             />
-            <div className="h-[6px] w-44 border border-gray-900 rounded overflow-hidden mt-2">
+            <div className="h-[6px] w-48 border border-gray-900 rounded overflow-hidden mt-2">
                 <div
                     className="h-full bg-gray-500 transition-all duration-150"
-                    style={{ width: `20%` }} // Adjust width dynamically based on actual progress if available
+                    style={{ width: `${process}%` }} // Adjust width dynamically based on actual progress if available
                 />
             </div>
         </div>

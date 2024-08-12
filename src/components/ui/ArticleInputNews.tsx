@@ -1,4 +1,4 @@
-import { NewsInputCard } from "./ui/NewsInputCard";
+import { NewsInputCard } from "@/components/ui/NewsInputCard";
 
 
 

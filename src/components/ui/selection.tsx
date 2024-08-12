@@ -27,7 +27,7 @@ export default function Selection({
                 value={value}
                 onChange={onChange}
             >
-                <option value="">{`--${select}--`}</option>
+                <option value={""}>{`--${select}--`}</option>
                 {options.map((item, index) => (
                     <option className="text-gray-900" key={index} value={item}>
                         {item}

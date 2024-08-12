@@ -9,10 +9,10 @@ const contentData = {
     description:"Ipsum placeholder text for use in your graphic, print and web layouts, and discover plugins for your favorite writing, design and blogging tools. Explore the origins, history and meaning of the famoLoremuIpsum placeholder text for use in your graphic, print and web layouts, and discover plugins for your favorite writing, design and blogging tools. Explore the origins, history and meaning of the famoLoremuIpsum placeholder text for use in your graphic, print and web layouts, and discover plugins for your favorite writing, design and blogging tools. Explore the origins, history and meaning of the famoLoremuIpsum placeholder text for use in your graphic, print and web layouts, and discover plugins for your favorite writing, design and blogging tools. Explore the origins, history and meaning of the famoLoremu Ipsum placeholder text for use in your graphic, print and web layouts, and discover plugins for your favorite writing, design and blogging tools. Explore the origins, history and meaning of the famoLoremu"
   }
 
-export default function MainPageNewsCard({className} : {className : string}) {
+export default function MainPageNewsCard({className , title,imgUrl, description} : {className : string, title : string, imgUrl: string , description: string}) {
     const[value, setValue] = useState(true);
     const [content, setContent] = useState(200)
-    let contentLength = contentData.description.length;
+    let contentLength = description.length;
     function setContentItem() {
         setValue(false),
         setContent(contentLength);
@@ -20,9 +20,9 @@ export default function MainPageNewsCard({className} : {className : string}) {
 
     return (
         <div className={cn("text-white flex flex-col items-center justify-start rounded-lg overflow-auto", className)}>
-        <div className={`text-gray-800 text-2xl sm:text-3xl font-semibold w-[95%] pb-5 mt-8`}>{contentData.title}</div>
-        <img src={contentData.url} className="bg-center bg-cover h-[50%] w-[80%] items-start rounded-lg"/>
-        <div className={`text-gray-800 h-auto  text-xl mt-5 first-letter:text-5xl w-[95%] `}>  {contentData.description.substring(0,content)} 
+        <div className={`text-gray-800 text-2xl sm:text-3xl font-semibold w-[95%] pb-5 mt-8`}>{title}</div>
+        <img src={imgUrl} className="bg-center bg-cover sm:w-auto h-[50%] w-[80%] items-start rounded-lg"/>
+        <div className={`text-gray-800 h-auto  text-xl mt-5 first-letter:text-5xl w-[95%] `}>  {description.substring(0,content)} 
          {
               value == true ? <button onClick={setContentItem} children={"Read More"} className={"text-blue-900"}/> : null
          }                                       

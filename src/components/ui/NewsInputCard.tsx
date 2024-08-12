@@ -7,10 +7,14 @@ import Selection from "./selection";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useSetRecoilState } from "recoil";
 import { userInputAtom } from "@/atom/atom";
+import { addNews } from "@/app/api/news/route";
+import { SingleImageDropzone } from "../Single-image-dropzon";
+
 interface NewsProps {
+    contentType? : string;
     title?: string;
     content?: string;
-    imgUrl?: string | null;
+    imgUrl?: any;
     category?: string;
     type?: string;
     name?: string;
@@ -21,21 +25,23 @@ export function NewsInputCard({ conType }: { conType: "breaking" | "story" | "ar
     const initialData = (conType: "breaking" | "story" | "article"): NewsProps => {
         switch (conType) {
             case "breaking":
-                return { title: "", content: "", imgUrl: null, category: "", type: "" };
+                return { title: "", content: "", imgUrl: null, category: "all", type: "normal", contentType : conType};
             case "story":
-                return { title: "", content: "", imgUrl: null, name: "", topic: "" };
+                return { title: "", content: "", imgUrl: null, name: "", topic: "", contentType : conType};
             case "article":
-                return { title: "", content: "", ConPublic: false };
+                return { title: "", content: "", ConPublic: false, contentType : conType };
             default:
                 return {};
         }
     };
     const { edgestore } = useEdgeStore();
     const [data, setData] = useState<NewsProps>(initialData(conType));
-    const [file, setFile] = useState<File | null>(null);
+    const [file, setFile] = useState<File>();
     const [compile, setCompile] = useState(false)
     const setUserDataForReview = useSetRecoilState(userInputAtom)
-     
+    const [progress, setProgress] = useState(0);
+    let Image : any ;
+    let ThumImage : any;
     useEffect(() => {
         if (file) {
             setData(prevData => ({...prevData, imgUrl : URL.createObjectURL(file)}))
@@ -43,15 +49,65 @@ export function NewsInputCard({ conType }: { conType: "breaking" | "story" | "ar
     }, [file]);
 
     useEffect(() => {
+       
         setUserDataForReview(data);
     },[compile])
+
+    async function handleSaved() {
+       
+        //@ts-ignore
+        if (file && data.imgUrl?.length > 0) {
+            console.log("chalo gao")
+            //@ts-ignore
+            const res = await edgestore.myPublicImage.upload({
+                file,
+                onProgressChange: (progress : any) => {
+                    setProgress(progress);
+                },
+            });
+         Image = res.url;
+         ThumImage = res.thumbnailUrl;
+        }
+              const res = await addNews(data, Image, ThumImage);
+             alert(res)
+              Image = null;
+              ThumImage = null;
+              setFile(undefined);
+              setData(prevData => ({...prevData,  
+                title: "",
+                content: "",
+                imgUrl: "",
+                category: "",
+                type: "",
+                name: "",
+                topic: "",
+                ConPublic: false}))
+    }
 
     return (
         <div className=" h-full w-[100%] md:w-[50%] flex flex-col items-center justify-center">
             <div className="text-xl font-semibold mb-5">Upload Content</div>
-            <div className="w-full flex items-center justify-end"><Button disabled={false} onClick={() => { setCompile(!compile) }} className="bg-green-700/60 text-white/80 active:text-gray-900 ">Compile</Button></div>
+            <div className="w-full flex items-center justify-end"><Button disabled={false} onClick={() => { setCompile(!compile) }} className="bg-green-700/60 text-white/80 active:text-gray-900 mr-5">Compile</Button></div>
             {
-                (conType === 'breaking' || conType === 'story') && <ImageInput value={file} onChange={(file) => { setFile(file); }} />
+                (conType === 'breaking' || conType === 'story') &&  <>  <SingleImageDropzone
+                width={200}
+                height={200}
+                value={file}
+                dropzoneOptions={{
+                    maxSize: 1024 * 1024 * 1,
+                    maxFiles: 1
+                }}
+                onChange={(file) => {
+                    setFile(file);
+                }}
+            />
+            <div className="h-[6px] w-48 border border-gray-900 rounded overflow-hidden mt-2">
+                <div
+                    className="h-full bg-gray-500 transition-all duration-150"
+                    style={{ width: `${progress}%` }} 
+                />
+            </div>
+            </>
             }
             <div className="flex flex-col items-center justify-center gap-5 mt-[2rem] w-[100%]">
                 <div className=" w-[80%] flex flex-col h-auto gap-2">
@@ -72,7 +128,7 @@ export function NewsInputCard({ conType }: { conType: "breaking" | "story" | "ar
                                         value={data.category}
                                         onChange={(e) => setData(prevData => ({ ...prevData, category: e.target.value }))}
                                         label="Choose the category"
-                                        options={["ourCity", "bollywood", "Business", "carrier", "country", "lifestyle", "magazine", "politics", "sports", "techAuto", "topNews", "women"]}
+                                        options={["non","ourCity", "bollywood", "Business", "carrier", "country", "lifestyle", "magazine", "politics", "sports", "techAuto", "topNews", "women"]}
                                     />
                                 </div>
                                 <div className="w-[80%] flex flex-col h-auto gap-2">
@@ -81,7 +137,7 @@ export function NewsInputCard({ conType }: { conType: "breaking" | "story" | "ar
                                         value={data.type}
                                         onChange={(e) => setData(prevData => ({ ...prevData, type: e.target.value }))}
                                         label="Choose the type"
-                                        options={["hover", "headline"]}
+                                        options={["normal","hover", "headline"]}
                                     />
                                 </div>
                             </>
@@ -114,9 +170,9 @@ export function NewsInputCard({ conType }: { conType: "breaking" | "story" | "ar
 
             </div>
 
-            {/* <div className="w-full mt-5 mb-10 flex items-center justify-center">
-               <Button className="bg-cyan-500 text-white hover:bg-cyan-600/80  active:text-gray-200 w-[50%]">Submit</Button>
-          </div> */}
+            <div className="w-full mt-5 mb-10 flex items-center justify-center">
+               <Button disabled={false} onClick={handleSaved} className="bg-cyan-500 text-white hover:bg-cyan-600/80  active:text-gray-200 w-[50%]">Submit</Button>
+          </div>
         </div>
     )
 }
