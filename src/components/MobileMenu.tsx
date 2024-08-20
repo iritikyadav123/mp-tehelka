@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FilterButton from "./ui/FilterButton"
 import { useRecoilState } from "recoil";
 import { filterComponent } from "@/atom/atom";
@@ -82,19 +82,41 @@ const compoData = [{
 export default function () {
   const [DataFilter, setDataFilter] = useState(false);
   const [chooseType, setChooseType] = useRecoilState(filterComponent)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   function handleClick(value: string) {
     value !== chooseType ? setChooseType(value) : setChooseType('non')
 
   }
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if(menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setDataFilter(false);
+    }
+  }
+
+  const handleScroll = () => {
+    setDataFilter(false);
+  }
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+    
   return (
     <>
       <div onClick={() => { setDataFilter(!DataFilter) }} className="h-6 w-6 flex items-center justify-center rounded-lg hover:bg-stone-200 active:border border-stone-400 active:bg-stone-300">
-        <img src="/icon/menu.png" className="h-4 w-4 cursor-pointer " />
+        {
+          DataFilter == false ?  <img src="/icon/menu.png" className="h-4 w-4 cursor-pointer " /> :  <img src="/close.png" className="h-4 w-4 cursor-pointer " />
+        }
       </div>
       {
         DataFilter == true && (
-          <div className="absolute h-[38rem] -left-5 top-14 w-[20rem] bg-stone-100 backdrop-blur-xl  flex flex-col items-center justify-start rounded-b-xl overflow-auto no-scrollbar pb-[10rem]"> {
+          <div ref={menuRef} id="menu-list" className="absolute h-[38rem] -left-5 top-14 w-[20rem] bg-stone-100 backdrop-blur-xl  flex flex-col items-center justify-start rounded-b-xl overflow-auto no-scrollbar pb-[10rem]"> {
             compoData.map((item, index) => (
               <FilterButton onClick={() => { handleClick(item.click) }} key={index} imgUrl={item.imgUrl} name={item.name} click={item.click} />
             ))
